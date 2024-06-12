@@ -192,3 +192,32 @@ END //
 DELIMITER ;
 
 SELECT learnmysql.name_of_worker_max_salary();
+
+-- ------------------------------------------------------------------------
+# Window Functions
+-- It is also knows as analytic functions allow you to perform calculations across a set of rows related to the current row.
+-- Defined by OVER() Clouse
+
+-- it gives sum salary with new added column and also give other information.
+SELECT *, SUM(salary) OVER() AS sum_salary FROM worker;
+
+SELECT *, SUM(salary) OVER(ORDER BY SALARY) AS sum_salary FROM worker;
+
+-- PARTITION BY works like GROUP BY, But it allow you to see all other details.
+SELECT *, MAX(salary) OVER(PARTITION BY DEPARTMENT) AS max_salary FROM worker;
+
+-- ROW_NUMBER() it add each row number
+SELECT *, ROW_NUMBER() OVER() FROM worker;
+
+-- RANK() it will give rank to each record based on OVER() condition
+SELECT *, RANK() OVER(ORDER BY salary DESC) FROM worker;
+
+-- DENSE_RANK()
+SELECT *, RANK() OVER(ORDER BY DEPARTMENT) FROM worker; -- in this case it will skip rank num if same rank occures
+SELECT *, DENSE_RANK() OVER(ORDER BY DEPARTMENT) FROM worker;
+
+-- LAG() -- it means one behind
+SELECT *, LAG(DEPARTMENT) OVER() FROM worker;
+
+-- LEAD() -- it means one ahead
+SELECT *, LEAD(DEPARTMENT) OVER() FROM worker;

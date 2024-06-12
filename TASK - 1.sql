@@ -187,6 +187,7 @@ SELECT * FROM worker ORDER BY SALARY DESC LIMIT 4,1;
 
 # Q-34. Write an SQL query to determine the 5th highest salary without using TOP or limit method.
 WITH temp_worker AS (SELECT SALARY, ROW_NUMBER() OVER(ORDER BY SALARY DESC) AS "rownum" FROM worker) SELECT SALARY FROM temp_worker WHERE rownum = 5;
+SELECT *, RANK() OVER(ORDER BY Salary DESC) FROM worker LIMIT 4,1;
 
 # Q-35. Write an SQL query to fetch the list of employees with the same salary.
 SELECT w1.* FROM worker AS w1 INNER JOIN worker AS w2 ON w1.salary = w2.salary AND w1.worker_id != w2.worker_id;
@@ -208,12 +209,14 @@ SELECT DEPARTMENT,COUNT(*) FROM worker GROUP BY DEPARTMENT;
 
 # Q-42. Write an SQL query to show the last record from a table.
 WITH new_worker AS (SELECT *, ROW_NUMBER() OVER() AS "rownum" FROM worker) SELECT * FROM new_worker WHERE rownum = (SELECT MAX(rownum) FROM new_worker);
+SELECT *, ROW_NUMBER() OVER() AS "rownum" FROM worker ORDER BY rownum DESC LIMIT 1;
 
 # Q-43. Write an SQL query to fetch the first row of a table.
 SELECT * FROM worker LIMIT 1;
 
 # Q-44. Write an SQL query to fetch the last five records from a table.
 WITH new_worker AS (SELECT *, ROW_NUMBER() OVER() AS "rownum" FROM worker) SELECT * FROM new_worker WHERE rownum > (SELECT COUNT(rownum) FROM new_worker) - 5;
+SELECT *, ROW_NUMBER() OVER() AS "rownum" FROM worker ORDER BY rownum DESC LIMIT 0,5;
 SELECT * FROM worker ORDER BY worker_id DESC LIMIT 5;
 
 # Q-45. Write an SQL query to print the name of employees having the highest salary in each department.
