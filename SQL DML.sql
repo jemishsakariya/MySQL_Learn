@@ -175,3 +175,20 @@ DROP PROCEDURE IF EXISTS get_sum_salary_HR_dep;
 
 -- ------------------------------------------------------------------------
 # User Defined Functions
+DELIMITER //
+
+CREATE FUNCTION name_of_worker_max_salary() RETURNS VARCHAR(50)
+DETERMINISTIC NO SQL READS SQL DATA
+BEGIN
+	DECLARE max_salary VARCHAR(50);
+    DECLARE emp_name VARCHAR(50);
+    
+    SELECT MAX(Salary) INTO max_salary FROM worker;
+    SELECT FIRST_NAME INTO emp_name FROM worker WHERE Salary = max_salary;
+    
+    RETURN emp_name;
+END //
+
+DELIMITER ;
+
+SELECT learnmysql.name_of_worker_max_salary();
