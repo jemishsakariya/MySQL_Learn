@@ -131,6 +131,18 @@ DROP TRIGGER update_bank_cus;
 -- often use to perform action like data modification, transaction control, and executing sequence of statemets.
 -- https://www.freecodecamp.org/news/how-to-simplify-database-operations-using-mysql-stored-procedures/
 
+-- Exception Handling:-
+-- https://dev.mysql.com/doc/refman/8.4/en/declare-handler.html
+-- https://www.tutorialspoint.com/mysql/mysql_declare_handler_statement.htm
+-- https://www.youtube.com/watch?v=CA4DfaVxMO8&ab_channel=FreeLecturesofCSECourses
+/* Syntax
+DECLARE handler_action HANDLER
+   FOR condition_value
+   statement
+   
+   -- handler_action = CONTINUE || EXIT
+*/
+
 # if PROCEDURE Exists
 DROP PROCEDURE IF EXISTS worker_name;
 
