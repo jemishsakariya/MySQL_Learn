@@ -129,6 +129,7 @@ DROP TRIGGER update_bank_cus;
 # STORE PROCEDURE
 -- These are routines that contains series of sql statements and procedural logic.
 -- often use to perform action like data modification, transaction control, and executing sequence of statemets.
+-- https://www.freecodecamp.org/news/how-to-simplify-database-operations-using-mysql-stored-procedures/
 
 # if PROCEDURE Exists
 DROP PROCEDURE IF EXISTS worker_name;
