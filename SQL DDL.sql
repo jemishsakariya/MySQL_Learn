@@ -126,3 +126,77 @@ DELETE FROM Course WHERE cno = 101;
 
 drop table Course;
 drop table Enroll;
+
+-- ----------------------------------------------------------------------
+## indexes
+
+# Creating prefix indexes
+-- To create a prefix index in MySQL, you have to specify the prefix length you want to index. 
+-- Suppose we have a worker table with a string column for the first name, and we want to index the first five characters only:
+
+ALTER TABLE worker ADD INDEX (first_name(5));
+
+SHOW INDEXES FROM worker;
+
+DROP INDEX first_name ON worker; 
+
+# Composite indexes / Multi Columns indexes
+-- Rules for composite indexes
+-- 1. Left-to-right, no skipping: MySQL can only access the index in order, starting from the leftmost column and moving to the right. It can't skip columns in the index.
+-- 2. Stops at the first range: MySQL stops using the index after the first range condition encountered.
+
+ALTER TABLE worker ADD INDEX multikey_index (first_name,last_name,salary);
+
+SHOW INDEXES FROM worker;
+
+EXPLAIN SELECT * FROM worker WHERE first_name = 'Vishal' AND last_name = 'Singhal'; -- key_len = 202
+EXPLAIN SELECT * FROM worker WHERE first_name = 'Vishal' AND last_name = 'Singhal' AND salary = 300000; -- key_len = 207
+-- IF The key length remains 202 bytes, meaning MySQL doesn't use the salary part of the index.
+
+# Covering indexes
+-- index covers the entire set of requirements for a single query.
+
+EXPLAIN analyze SELECT first_name,last_name,salary from worker;
+
+# Functional indexes
+-- Function-based indexes are used in cases where you need to create an index on a function rather than a column.
+
+ALTER TABLE worker ADD INDEX idx_month_joining ((MONTH(JOINING_DATE)));
+
+EXPLAIN ANALYZE SELECT * FROM worker WHERE MONTH(JOINING_DATE) = 6;
+
+# Indexing for wildcard searches
+-- wildcards use index when it is at the end like "a%".
+
+ALTER TABLE worker ADD INDEX (first_name);
+
+EXPLAIN SELECT * FROM worker WHERE first_name LIKE 'v%';
+
+# Fulltext indexes
+-- it uses text search on created index
+
+ALTER TABLE products ADD FULLTEXT INDEX fulltextindex (productname);
+
+EXPLAIN ANALYZE SELECT * FROM products WHERE MATCH(productname) AGAINST("chef"); -- Natural language mode
+
+SELECT * FROM products WHERE MATCH(productname) AGAINST("+chef -mix" IN BOOLEAN MODE);
+
+SELECT productname, MATCH(productname) AGAINST("+chef -mix" IN BOOLEAN MODE) FROM products; -- it gives Score of search
+
+SELECT * FROM products WHERE MATCH(productname) AGAINST('"Chef Anton\'s Gumbo Mix"'); -- "" for exact match
+
+# Invisible indexes
+-- it will stop using index.
+
+ALTER TABLE worker ALTER INDEX FIRST_NAME INVISIBLE;
+
+SHOW INDEX FROM worker;
+
+ALTER TABLE worker ALTER INDEX FIRST_NAME VISIBLE;
+
+# Hints
+-- Force index to use specific index
+EXPLAIN ANALYZE SELECT first_name FROM worker; -- it uses FIRST_NAME index
+EXPLAIN ANALYZE SELECT first_name FROM worker USE INDEX(multikey_index); -- it uses multikey_index
+
+EXPLAIN ANALYZE SELECT first_name FROM worker IGNORE INDEX(FIRST_NAME,multikey_index); -- it will ignore both index
