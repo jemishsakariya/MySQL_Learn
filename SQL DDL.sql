@@ -200,3 +200,8 @@ EXPLAIN ANALYZE SELECT first_name FROM worker; -- it uses FIRST_NAME index
 EXPLAIN ANALYZE SELECT first_name FROM worker USE INDEX(multikey_index); -- it uses multikey_index
 
 EXPLAIN ANALYZE SELECT first_name FROM worker IGNORE INDEX(FIRST_NAME,multikey_index); -- it will ignore both index
+
+# UNIQUE index
+-- it created on unique values only.
+ALTER TABLE products ADD UNIQUE INDEX price(price);
+explain analyze select * from products where price between 19 and 25;
